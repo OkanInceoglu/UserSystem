@@ -4,18 +4,30 @@
 using namespace std;
 
 class User {
-public:
+private:
     int id;
     string name;
+    string email;
 
-    User(int i, string n) {
-        id = i;
-        name = n;
+public:
+    User(int userId, string userName, string userEmail) {
+        id = userId;
+        name = userName;
+        email = userEmail;
+    }
+
+    int getId() {
+        return id;
+    }
+
+    void display() {
+        cout << "ID: " << id
+            << " | Name: " << name
+            << " | Email: " << email << endl;
     }
 };
 
 vector<User> users;
-int nextId = 1;
 
 void showMenu() {
     cout << "\n===== USER MANAGEMENT SYSTEM =====\n";
@@ -23,48 +35,52 @@ void showMenu() {
     cout << "2. List Users\n";
     cout << "3. Delete User\n";
     cout << "4. Exit\n";
-    cout << "Select an option: ";
+    cout << "Select option: ";
 }
 
-void addUser(vector<User>& users, int& nextId) {
-    string name;
+void addUser() {
+    int id;
+    string name, email;
 
-    cout << "Enter name: ";
+    cout << "Enter ID: ";
+    cin >> id;
+
+    cout << "Enter Name: ";
     cin >> name;
 
-    users.push_back(User(nextId, name));
-    cout << "User added with ID: " << nextId << endl;
+    cout << "Enter Email: ";
+    cin >> email;
 
-    nextId++;
+    users.push_back(User(id, name, email));
+
+    cout << "User added successfully!\n";
 }
 
-void listUsers(vector<User>& users) {
+void listUsers() {
     if (users.empty()) {
         cout << "No users found.\n";
         return;
     }
 
-    cout << "\n--- USER LIST ---\n";
-    for (const auto& user : users) {
-        cout << "ID: " << user.id << " | Name: " << user.name << endl;
+    for (User& u : users) {
+        u.display();
     }
 }
 
-void deleteUser(vector<User>& users) {
+void deleteUser() {
     int id;
-
     cout << "Enter ID to delete: ";
     cin >> id;
 
-    for (auto it = users.begin(); it != users.end(); ++it) {
-        if (it->id == id) {
+    for (auto it = users.begin(); it != users.end(); it++) {
+        if (it->getId() == id) {
             users.erase(it);
-            cout << "User deleted.\n";
+            cout << "User deleted successfully!\n";
             return;
         }
     }
 
-    cout << "User not found.\n";
+    cout << "User not found!\n";
 }
 
 int main() {
@@ -76,25 +92,23 @@ int main() {
 
         switch (choice) {
         case 1:
-            addUser(users, nextId);
+            addUser();
             break;
 
         case 2:
-            listUsers(users);
+            listUsers();
             break;
 
         case 3:
-            deleteUser(users);
+            deleteUser();
             break;
 
         case 4:
-            cout << "Exiting program...\n";
+            cout << "Exiting...\n";
             return 0;
 
         default:
             cout << "Invalid option!\n";
         }
     }
-
-    return 0;
 }
