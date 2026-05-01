@@ -20,6 +20,14 @@ public:
         return id;
     }
 
+    void setName(string newName) {
+        name = newName;
+    }
+
+    void setEmail(string newEmail) {
+        email = newEmail;
+    }
+
     void display() {
         cout << "ID: " << id
             << " | Name: " << name
@@ -33,8 +41,9 @@ void showMenu() {
     cout << "\n===== USER MANAGEMENT SYSTEM =====\n";
     cout << "1. Add User\n";
     cout << "2. List Users\n";
-    cout << "3. Delete User\n";
-    cout << "4. Exit\n";
+    cout << "3. Update User\n";
+    cout << "4. Delete User\n";
+    cout << "5. Exit\n";
     cout << "Select option: ";
 }
 
@@ -67,14 +76,41 @@ void listUsers() {
     }
 }
 
+void updateUser() {
+    int id;
+    cout << "Enter ID to update: ";
+    cin >> id;
+
+    for (User& u : users) {
+        if (u.getId() == id) {
+
+            string newName, newEmail;
+
+            cout << "Enter new name: ";
+            cin >> newName;
+
+            cout << "Enter new email: ";
+            cin >> newEmail;
+
+            u.setName(newName);
+            u.setEmail(newEmail);
+
+            cout << "User updated successfully!\n";
+            return;
+        }
+    }
+
+    cout << "User not found!\n";
+}
+
 void deleteUser() {
     int id;
     cout << "Enter ID to delete: ";
     cin >> id;
 
-    for (auto it = users.begin(); it != users.end(); it++) {
-        if (it->getId() == id) {
-            users.erase(it);
+    for (int i = 0; i < users.size(); i++) {
+        if (users[i].getId() == id) {
+            users.erase(users.begin() + i);
             cout << "User deleted successfully!\n";
             return;
         }
@@ -100,10 +136,14 @@ int main() {
             break;
 
         case 3:
-            deleteUser();
+            updateUser();
             break;
 
         case 4:
+            deleteUser();
+            break;
+
+        case 5:
             cout << "Exiting...\n";
             return 0;
 
@@ -111,4 +151,6 @@ int main() {
             cout << "Invalid option!\n";
         }
     }
+
+    return 0;
 }
