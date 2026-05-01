@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <vector>
+#include <fstream>
 
 using namespace std;
 
@@ -20,6 +21,14 @@ public:
         return id;
     }
 
+    string getName() {
+        return name;
+    }
+
+    string getEmail() {
+        return email;
+    }
+
     void setName(string newName) {
         name = newName;
     }
@@ -37,15 +46,36 @@ public:
 
 vector<User> users;
 
-void showMenu() {
-    cout << "\n===== USER MANAGEMENT SYSTEM =====\n";
-    cout << "1. Add User\n";
-    cout << "2. List Users\n";
-    cout << "3. Update User\n";
-    cout << "4. Delete User\n";
-    cout << "5. Exit\n";
-    cout << "Select option: ";
+// ---------------- FILE SYSTEM ----------------
+
+void saveUsers() {
+    ofstream file("users.txt");
+
+    for (User& u : users) {
+        file << u.getId() << " "
+            << u.getName() << " "
+            << u.getEmail() << endl;
+    }
+
+    file.close();
 }
+
+void loadUsers() {
+    ifstream file("users.txt");
+
+    if (!file.is_open()) return;
+
+    int id;
+    string name, email;
+
+    while (file >> id >> name >> email) {
+        users.push_back(User(id, name, email));
+    }
+
+    file.close();
+}
+
+// ---------------- CRUD ----------------
 
 void addUser() {
     int id;
@@ -62,7 +92,7 @@ void addUser() {
 
     users.push_back(User(id, name, email));
 
-    cout << "User added successfully!\n";
+    cout << "User added!\n";
 }
 
 void listUsers() {
@@ -83,19 +113,18 @@ void updateUser() {
 
     for (User& u : users) {
         if (u.getId() == id) {
+            string name, email;
 
-            string newName, newEmail;
+            cout << "New name: ";
+            cin >> name;
 
-            cout << "Enter new name: ";
-            cin >> newName;
+            cout << "New email: ";
+            cin >> email;
 
-            cout << "Enter new email: ";
-            cin >> newEmail;
+            u.setName(name);
+            u.setEmail(email);
 
-            u.setName(newName);
-            u.setEmail(newEmail);
-
-            cout << "User updated successfully!\n";
+            cout << "Updated!\n";
             return;
         }
     }
@@ -111,7 +140,7 @@ void deleteUser() {
     for (int i = 0; i < users.size(); i++) {
         if (users[i].getId() == id) {
             users.erase(users.begin() + i);
-            cout << "User deleted successfully!\n";
+            cout << "Deleted!\n";
             return;
         }
     }
@@ -119,7 +148,23 @@ void deleteUser() {
     cout << "User not found!\n";
 }
 
+// ---------------- MENU ----------------
+
+void showMenu() {
+    cout << "\n===== USER SYSTEM =====\n";
+    cout << "1. Add User\n";
+    cout << "2. List Users\n";
+    cout << "3. Update User\n";
+    cout << "4. Delete User\n";
+    cout << "5. Exit\n";
+    cout << "Select: ";
+}
+
+// ---------------- MAIN ----------------
+
 int main() {
+    loadUsers(); // program açılırken veri yükle
+
     int choice;
 
     while (true) {
@@ -129,6 +174,7 @@ int main() {
         switch (choice) {
         case 1:
             addUser();
+            saveUsers();
             break;
 
         case 2:
@@ -137,10 +183,12 @@ int main() {
 
         case 3:
             updateUser();
+            saveUsers();
             break;
 
         case 4:
             deleteUser();
+            saveUsers();
             break;
 
         case 5:
@@ -151,6 +199,4 @@ int main() {
             cout << "Invalid option!\n";
         }
     }
-
-    return 0;
 }
